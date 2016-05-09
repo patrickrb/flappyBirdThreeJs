@@ -9,6 +9,7 @@ angular.module('flappyBirdThreeJs')
 					var scene;
 					var renderer;
 					var raycaster;
+					var bird;
           var loader = new THREE.ObjectLoader();
 
 					//init the scene
@@ -17,7 +18,7 @@ angular.module('flappyBirdThreeJs')
 
 					function init() {
 						camera = new THREE.PerspectiveCamera(90, window.innerWidth / window.innerHeight, 1, 999000);
-						camera.position.set(0, 1.5, 0);
+						camera.position.set(-15, 0, 0);
 
 						camera.lookAt(0,0, 0);
 
@@ -29,21 +30,30 @@ angular.module('flappyBirdThreeJs')
 						renderer.sortObjects = true;
 
 						elem[0].appendChild(renderer.domElement);
+						//
+            // var directionalLight = new THREE.DirectionalLight( 0xffeedd );
+            // directionalLight.position.set( 0, 1, 1 );
+            // scene.add( directionalLight );
 
-            var directionalLight = new THREE.DirectionalLight( 0xffeedd );
-            directionalLight.position.set( 0, 1, 1 );
-            scene.add( directionalLight );
 
+            var ambientLight = new THREE.AmbientLight( 0xffeedd );
+            ambientLight.position.set( 0, 1, 1 );
+            scene.add( ambientLight );
 
 
             loader.load('assets/models/bird.json',function (obj) {
-								var box = new Physijs.BoxMesh(
+								bird = new Physijs.BoxMesh(
 				            new THREE.CubeGeometry( 0.2, 0.2, 0.2 ),
 				            new THREE.MeshBasicMaterial()
 				        );
-								box.add(obj);
-				        scene.add( box );
+								bird.add(obj);
+				        scene.add( bird );
             });
+
+						loader.load('assets/models/pipe.json',function (obj) {
+						  console.log('pipe object: ', obj);
+						    scene.add( obj );
+						});
 
 
 						// Events
@@ -55,6 +65,7 @@ angular.module('flappyBirdThreeJs')
 
 					function onMouseDown(){
 						console.log('mouse clicked');
+						flapBird();
 					}
 
 					function onWindowResize() {
@@ -63,6 +74,11 @@ angular.module('flappyBirdThreeJs')
 						camera.updateProjectionMatrix();
 					}
 
+					function flapBird(){
+						var effect = new THREE.Vector3(0,0.1,0);
+						var offset = new THREE.Vector3(0,0,0);
+						bird.applyImpulse(effect, offset);
+					}
 
 
 					function animate(time) {
