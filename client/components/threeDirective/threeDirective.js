@@ -36,7 +36,7 @@ angular.module('flappyBirdThreeJs')
 
 
 
-            loader.load('assets/models/dice.json',function (obj) {
+            loader.load('assets/models/bird.json',function (obj) {
 								var box = new Physijs.BoxMesh(
 				            new THREE.CubeGeometry( 0.2, 0.2, 0.2 ),
 				            new THREE.MeshBasicMaterial()
@@ -48,11 +48,15 @@ angular.module('flappyBirdThreeJs')
 
 						// Events
 						window.addEventListener('resize',  onWindowResize, false);
+						window.addEventListener('mousedown', onMouseDown, false);
 
             controlsService.addControls(camera, elem[0].childNodes[0]);
 					}
 
-					//
+					function onMouseDown(){
+						console.log('mouse clicked');
+					}
+
 					function onWindowResize() {
 						renderer.setSize(window.innerWidth, window.innerHeight);
 						camera.aspect = window.innerWidth / window.innerHeight;
