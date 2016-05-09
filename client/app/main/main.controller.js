@@ -6,7 +6,7 @@
 
     }
 
-    angular.module('meanThree')
+    angular.module('flappyBirdThreeJs')
         .controller('MainController', MainController);
 
 })();

@@ -13,7 +13,8 @@ module.exports = {
         '.htaccess',
         'bower_components/**/*',
         'assets/**/*',
-        'index.html'
+        'index.html',
+        '*.js'
       ]
     }, {
       expand: true,

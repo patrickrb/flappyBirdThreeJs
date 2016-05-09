@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('meanThree')
+angular.module('flappyBirdThreeJs')
   .service('utilsService', function () {
     class UtilsService {
             constructor() {

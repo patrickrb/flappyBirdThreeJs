@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('meanThree')
+angular.module('flappyBirdThreeJs')
 	.directive('threeDirective',function ($rootScope, controlsService) {
 			return {
 				restrict: 'E',
@@ -21,7 +21,7 @@ angular.module('meanThree')
 
 						camera.lookAt(0,0, 0);
 
-						scene = new THREE.Scene();
+						scene = new Physijs.Scene();
 
 						raycaster = new THREE.Raycaster();
 						renderer = new THREE.WebGLRenderer({ antialias: true });
@@ -30,9 +30,6 @@ angular.module('meanThree')
 
 						elem[0].appendChild(renderer.domElement);
 
-            // var ambient = new THREE.AmbientLight( 0xffffff );
-            // scene.add( ambient );
-
             var directionalLight = new THREE.DirectionalLight( 0xffeedd );
             directionalLight.position.set( 0, 1, 1 );
             scene.add( directionalLight );
@@ -40,8 +37,12 @@ angular.module('meanThree')
 
 
             loader.load('assets/models/dice.json',function (obj) {
-                scene.add( obj );
-								camera.lookAt(obj);
+								var box = new Physijs.BoxMesh(
+				            new THREE.CubeGeometry( 0.2, 0.2, 0.2 ),
+				            new THREE.MeshBasicMaterial()
+				        );
+								box.add(obj);
+				        scene.add( box );
             });
 
 
@@ -67,6 +68,7 @@ angular.module('meanThree')
 					}
 
 					function render() {
+						scene.simulate(); // run physics
 						// renderer.render(backgroundScene , backgroundCamera )
 						renderer.render(scene, camera);
 					}

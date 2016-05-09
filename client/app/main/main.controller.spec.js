@@ -3,7 +3,7 @@
 // describe('Controller: MainController', function() {
 //
 //   // load the controller's module
-//   beforeEach(module('meanThree'));
+//   beforeEach(module('flappyBirdThreeJs'));
 //   beforeEach(module('stateMock'));
 //   beforeEach(module('socketMock'));
 //

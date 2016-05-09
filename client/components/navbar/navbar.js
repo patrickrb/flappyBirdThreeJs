@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('meanThree')
+angular.module('flappyBirdThreeJs')
     .directive('navbar', function($rootScope, $cookieStore) {
         return {
             restrict: 'E',
