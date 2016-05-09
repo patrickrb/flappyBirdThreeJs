@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('meanThree')
+angular.module('flappyBirdThreeJs')
   .controller('LoginCtrl', function($scope, Auth, $state) {
     $scope.user = {};
     $scope.errors = {};
