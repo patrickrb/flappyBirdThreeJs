@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('meanThree')
+angular.module('flappyBirdThreeJs')
   .service('controlsService', function () {
     class ControlsService {
             constructor() {
@@ -18,6 +18,7 @@ angular.module('meanThree')
 
   						this.controls.keys = [ 65, 83, 68 ];
   						this.controls.minDistance = 2.5;
+              this.controls.enabled = false;
   					}
 
             getControls() {

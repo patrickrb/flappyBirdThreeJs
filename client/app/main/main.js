@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('meanThree')
+angular.module('flappyBirdThreeJs')
   .config(function($stateProvider) {
       $stateProvider
           .state('main', {
