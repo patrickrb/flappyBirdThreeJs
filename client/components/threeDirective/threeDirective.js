@@ -11,6 +11,7 @@ angular.module('flappyBirdThreeJs')
 					var raycaster;
 					var bird;
 					var pipeObject;
+					var backgroundTexture;
           var loader = new THREE.ObjectLoader();
 
 					//init the scene
@@ -64,14 +65,12 @@ angular.module('flappyBirdThreeJs')
 					    });
 						});
 
-						let backgroundTexture = THREE.ImageUtils.loadTexture( '/assets/textures/background.png' );
-						var backgroundGeometry = new THREE.PlaneGeometry( 100, 50, 0 );
-						var backgroundMaterial = new THREE.MeshBasicMaterial( {map: backgroundTexture, side: THREE.DoubleSide} );
-						var backgroundPlane = new THREE.Mesh( backgroundGeometry, backgroundMaterial );
+						backgroundTexture = new THREE.TextureLoader().load( '/assets/textures/background.png' );
+						backgroundTexture.wrapS = THREE.RepeatWrapping; //set background texture to repeat wrapping for animation
+						var backgroundPlane = new THREE.Mesh( new THREE.PlaneGeometry( 100, 50, 0 ), new THREE.MeshBasicMaterial( {map: backgroundTexture, side: THREE.DoubleSide} ) );
 						backgroundPlane.rotation.y = Math.PI / 2; //rotate the plane 90 degrees
             backgroundPlane.position.set( 10, 0, 0 );  //move the background texture back off the bird and pipe gates a bit
 						scene.add( backgroundPlane );
-
 
 						// Events
 						window.addEventListener('resize',  onWindowResize, false);
@@ -81,7 +80,6 @@ angular.module('flappyBirdThreeJs')
 					}
 
 					function onMouseDown(){
-						console.log('mouse clicked');
 						flapBird();
 					}
 
@@ -101,6 +99,7 @@ angular.module('flappyBirdThreeJs')
 					function animate(time) {
 						requestAnimationFrame(animate);
 					  controlsService.getControls().update();
+						backgroundTexture.offset.set(backgroundTexture.offset.x -= .001,0);
 						render();
 					}
 
