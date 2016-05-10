@@ -10,6 +10,7 @@ angular.module('flappyBirdThreeJs')
 					var renderer;
 					var raycaster;
 					var bird;
+					var pipeObject;
           var loader = new THREE.ObjectLoader();
 
 					//init the scene
@@ -41,6 +42,7 @@ angular.module('flappyBirdThreeJs')
             scene.add( ambientLight );
 
 
+						//load bird asset
             loader.load('assets/models/bird.json',function (obj) {
 								bird = new Physijs.BoxMesh(
 				            new THREE.CubeGeometry( 0.2, 0.2, 0.2 ),
@@ -50,10 +52,25 @@ angular.module('flappyBirdThreeJs')
 				        scene.add( bird );
             });
 
+						//load pipe asset
 						loader.load('assets/models/pipe.json',function (obj) {
-						  console.log('pipe object: ', obj);
-						    scene.add( obj );
+							obj.traverse( function ( child ) //find pipe object in loaded scene
+					    {
+					        if ( child instanceof THREE.Mesh ) {
+					            child.material.color.setRGB (0, 1, 0); //set pipe color to green
+											pipeObject = child; //assign child to pipeObject variable for building pipe gates
+									    scene.add( pipeObject ); //temporary, will remove when pipe gate method is built
+										}
+					    });
 						});
+
+						let backgroundTexture = THREE.ImageUtils.loadTexture( '/assets/textures/background.png' );
+						var backgroundGeometry = new THREE.PlaneGeometry( 100, 50, 0 );
+						var backgroundMaterial = new THREE.MeshBasicMaterial( {map: backgroundTexture, side: THREE.DoubleSide} );
+						var backgroundPlane = new THREE.Mesh( backgroundGeometry, backgroundMaterial );
+						backgroundPlane.rotation.y = Math.PI / 2; //rotate the plane 90 degrees
+            backgroundPlane.position.set( 10, 0, 0 );  //move the background texture back off the bird and pipe gates a bit
+						scene.add( backgroundPlane );
 
 
 						// Events
@@ -88,7 +105,7 @@ angular.module('flappyBirdThreeJs')
 					}
 
 					function render() {
-						scene.simulate(); // run physics
+						// scene.simulate(); // run physics
 						// renderer.render(backgroundScene , backgroundCamera )
 						renderer.render(scene, camera);
 					}
