@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('flappyBirdThreeJs')
-	.directive('threeDirective',function ($rootScope, controlsService) {
+	.directive('threeDirective',function ($rootScope, controlsService, pipeService) {
 			return {
 				restrict: 'E',
 				link: function (scope, elem) {
@@ -12,7 +12,7 @@ angular.module('flappyBirdThreeJs')
 					var bird;
 					var pipeObject;
 					var backgroundTexture;
-          var loader = new THREE.ObjectLoader();
+					var loader = new THREE.ObjectLoader();
 
 					//init the scene
 					init();
@@ -53,17 +53,11 @@ angular.module('flappyBirdThreeJs')
 				        scene.add( bird );
             });
 
-						//load pipe asset
-						loader.load('assets/models/pipe.json',function (obj) {
-							obj.traverse( function ( child ) //find pipe object in loaded scene
-					    {
-					        if ( child instanceof THREE.Mesh ) {
-					            child.material.color.setRGB (0, 1, 0); //set pipe color to green
-											pipeObject = child; //assign child to pipeObject variable for building pipe gates
-									    scene.add( pipeObject ); //temporary, will remove when pipe gate method is built
-										}
-					    });
-						});
+						pipeService.loadPipe();
+						$rootScope.$on('loaded:pipe', (event, data) => {
+							console.log('pipe loaded: ', pipeService.pipeObject);
+							pipeService.buildPipeGate(scene);
+						})
 
 						backgroundTexture = new THREE.TextureLoader().load( '/assets/textures/background.png' );
 						backgroundTexture.wrapS = THREE.RepeatWrapping; //set background texture to repeat wrapping for animation
