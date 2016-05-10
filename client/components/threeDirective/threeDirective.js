@@ -13,6 +13,11 @@ angular.module('flappyBirdThreeJs')
 					var pipeObject;
 					var backgroundTexture;
 					var loader = new THREE.ObjectLoader();
+					var frustum = new THREE.Frustum();
+					var cameraViewProjectionMatrix = new THREE.Matrix4();
+					var pipeGateVisible = true;
+					var vector = new THREE.Vector3();
+					var screenEdge;
 
 					//init the scene
 					init();
@@ -25,6 +30,9 @@ angular.module('flappyBirdThreeJs')
 						camera.lookAt(0,0, 0);
 
 						scene = new Physijs.Scene();
+
+
+						screenEdge = camera.getFilmWidth() / 2;
 
 						raycaster = new THREE.Raycaster();
 						renderer = new THREE.WebGLRenderer({ antialias: true });
@@ -50,13 +58,14 @@ angular.module('flappyBirdThreeJs')
 				            new THREE.MeshBasicMaterial()
 				        );
 								bird.add(obj);
+
+								bird.scale.set(5,5,5);
 				        scene.add( bird );
             });
 
 						pipeService.loadPipe();
 						$rootScope.$on('loaded:pipe', (event, data) => {
-							console.log('pipe loaded: ', pipeService.pipeObject);
-							pipeService.buildPipeGate(scene);
+							pipeService.buildPipeGate(scene, screenEdge);
 						})
 
 						backgroundTexture = new THREE.TextureLoader().load( '/assets/textures/background.png' );
@@ -69,6 +78,7 @@ angular.module('flappyBirdThreeJs')
 						// Events
 						window.addEventListener('resize',  onWindowResize, false);
 						window.addEventListener('mousedown', onMouseDown, false);
+						// window.addEventListener('mousemove', onMouseMove, false);
 
             controlsService.addControls(camera, elem[0].childNodes[0]);
 					}
@@ -78,6 +88,7 @@ angular.module('flappyBirdThreeJs')
 					}
 
 					function onWindowResize() {
+						screenEdge = camera.getFilmWidth() / 2;
 						renderer.setSize(window.innerWidth, window.innerHeight);
 						camera.aspect = window.innerWidth / window.innerHeight;
 						camera.updateProjectionMatrix();
@@ -89,16 +100,32 @@ angular.module('flappyBirdThreeJs')
 						bird.applyImpulse(effect, offset);
 					}
 
+					function checkPipeVisible(){
+						camera.updateMatrixWorld(); // make sure the camera matrix is updated
+						camera.matrixWorldInverse.getInverse( camera.matrixWorld );
+						cameraViewProjectionMatrix.multiplyMatrices( camera.projectionMatrix, camera.matrixWorldInverse );
+						frustum.setFromMatrix( cameraViewProjectionMatrix );
+						pipeGateVisible = frustum.intersectsObject( pipeService.pipeGate.children[0] );
+						if(!pipeGateVisible){
+							pipeService.buildPipeGate(scene, screenEdge);
+							pipeGateVisible = true;
+						}
+					}
+
 
 					function animate(time) {
 						requestAnimationFrame(animate);
 					  controlsService.getControls().update();
-						backgroundTexture.offset.set(backgroundTexture.offset.x -= .001,0);
+						if(pipeService.pipeGate){
+							checkPipeVisible();
+						  pipeService.pipeGate.translateZ(-0.2);
+						}
+						backgroundTexture.offset.set(backgroundTexture.offset.x -= .0005,0);
 						render();
 					}
 
 					function render() {
-						// scene.simulate(); // run physics
+						scene.simulate(); // run physics
 						// renderer.render(backgroundScene , backgroundCamera )
 						renderer.render(scene, camera);
 					}
