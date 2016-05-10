@@ -10,13 +10,11 @@ angular.module('flappyBirdThreeJs')
 					var renderer;
 					var raycaster;
 					var bird;
-					var pipeObject;
 					var backgroundTexture;
 					var loader = new THREE.ObjectLoader();
 					var frustum = new THREE.Frustum();
 					var cameraViewProjectionMatrix = new THREE.Matrix4();
 					var pipeGateVisible = true;
-					var vector = new THREE.Vector3();
 					var screenEdge;
 
 					//init the scene
