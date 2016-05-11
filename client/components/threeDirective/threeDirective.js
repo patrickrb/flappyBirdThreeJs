@@ -44,14 +44,15 @@ angular.module('flappyBirdThreeJs')
 
 						elem[0].appendChild(renderer.domElement);
 						//
-            // var directionalLight = new THREE.DirectionalLight( 0xffeedd );
-            // directionalLight.position.set( 0, 1, 1 );
-            // scene.add( directionalLight );
+            var directionalLight = new THREE.PointLight( 0xffeedd );
+            directionalLight.position.set( -10, 0, 0 );
+            scene.add( directionalLight );
 
 
-            var ambientLight = new THREE.AmbientLight( 0xffeedd );
-            ambientLight.position.set( 0, 1, 1 );
-            scene.add( ambientLight );
+
+            // var ambientLight = new THREE.AmbientLight( 0xffeedd );
+            // ambientLight.position.set( 0, 1, 1 );
+            // scene.add( ambientLight );
 
 
 						//load bird asset
