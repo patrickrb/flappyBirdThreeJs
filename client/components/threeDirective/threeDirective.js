@@ -104,10 +104,12 @@ angular.module('flappyBirdThreeJs')
 						camera.matrixWorldInverse.getInverse( camera.matrixWorld );
 						cameraViewProjectionMatrix.multiplyMatrices( camera.projectionMatrix, camera.matrixWorldInverse );
 						frustum.setFromMatrix( cameraViewProjectionMatrix );
-						pipeGateVisible = frustum.intersectsObject( pipeService.pipeGate.children[0] );
-						if(!pipeGateVisible){
-							pipeService.buildPipeGate(scene, screenEdge);
-							pipeGateVisible = true;
+						if(pipeService.pipeGate.children[0]){
+							pipeGateVisible = frustum.intersectsObject( pipeService.pipeGate.children[0] );
+							if(!pipeGateVisible){
+								pipeService.buildPipeGate(scene, screenEdge);
+								pipeGateVisible = true;
+							}
 						}
 					}
 
@@ -118,6 +120,13 @@ angular.module('flappyBirdThreeJs')
 						if(bird){
 							if(bird.hasOwnProperty('geometry')){
 								bird.setAngularVelocity({x: - bird.getLinearVelocity().y / 5 , y: 0, z:0});
+								raycaster.set(bird.position, new THREE.Vector3(0, 0, 1));
+								var collisions = raycaster.intersectObjects(pipeService.pipeGate.children);
+								if(collisions.length > 0){
+									if(collisions[0].distance <= 2.0){
+										console.log("GAME OVER");
+									}
+								}
 							}
 						}
 
