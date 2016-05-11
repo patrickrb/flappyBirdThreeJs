@@ -93,6 +93,7 @@ angular.module('flappyBirdThreeJs')
 					}
 
 					function flapBird(){
+						bird.setAngularVelocity({x: 0, y: 0, z: 0});
 						var effect = new THREE.Vector3(0,0.1,0);
 						var offset = new THREE.Vector3(0,0,0);
 						bird.applyImpulse(effect, offset);
@@ -114,6 +115,12 @@ angular.module('flappyBirdThreeJs')
 					function animate(time) {
 						requestAnimationFrame(animate);
 					  controlsService.getControls().update();
+						if(bird){
+							if(bird.hasOwnProperty('geometry')){
+								bird.setAngularVelocity({x: - bird.getLinearVelocity().y / 5 , y: 0, z:0});
+							}
+						}
+
 						if(pipeService.pipeGate){
 							checkPipeVisible();
 						  pipeService.pipeGate.translateZ(-0.2);
