@@ -11,12 +11,17 @@ angular.module('flappyBirdThreeJs')
 					var raycaster;
 					var bird;
 					var backgroundTexture;
+					var paused = false;
 					var loader = new THREE.ObjectLoader();
 					var frustum = new THREE.Frustum();
 					var cameraViewProjectionMatrix = new THREE.Matrix4();
 					var pipeGateVisible = true;
 					var screenEdge;
-
+					var collisionRays = [
+						new THREE.Vector3(0, 0, 1),
+      			new THREE.Vector3(0, 1, 0),
+      			new THREE.Vector3(0, -1, 0)
+					];
 					//init the scene
 					init();
 					animate();
@@ -93,6 +98,7 @@ angular.module('flappyBirdThreeJs')
 					}
 
 					function flapBird(){
+						bird.setAngularVelocity({x: 0, y: 0, z: 0});
 						var effect = new THREE.Vector3(0,0.1,0);
 						var offset = new THREE.Vector3(0,0,0);
 						bird.applyImpulse(effect, offset);
@@ -103,23 +109,43 @@ angular.module('flappyBirdThreeJs')
 						camera.matrixWorldInverse.getInverse( camera.matrixWorld );
 						cameraViewProjectionMatrix.multiplyMatrices( camera.projectionMatrix, camera.matrixWorldInverse );
 						frustum.setFromMatrix( cameraViewProjectionMatrix );
-						pipeGateVisible = frustum.intersectsObject( pipeService.pipeGate.children[0] );
-						if(!pipeGateVisible){
-							pipeService.buildPipeGate(scene, screenEdge);
-							pipeGateVisible = true;
+						if(pipeService.pipeGate.children[0]){
+							pipeGateVisible = frustum.intersectsObject( pipeService.pipeGate.children[0] );
+							if(!pipeGateVisible){
+								pipeService.buildPipeGate(scene, screenEdge);
+								pipeGateVisible = true;
+							}
 						}
 					}
 
 
 					function animate(time) {
-						requestAnimationFrame(animate);
-					  controlsService.getControls().update();
-						if(pipeService.pipeGate){
-							checkPipeVisible();
-						  pipeService.pipeGate.translateZ(-0.2);
+						if(!paused){
+							requestAnimationFrame(animate);
+						  controlsService.getControls().update();
+							if(bird){
+								if(bird.hasOwnProperty('geometry')){
+									bird.setAngularVelocity({x: - bird.getLinearVelocity().y / 5 , y: 0, z:0});
+									for (var i = 0; i < collisionRays.length; i++) {
+										raycaster.set(bird.position, collisionRays[i]);
+										var collisions = raycaster.intersectObjects(pipeService.pipeGate.children);
+										if(collisions.length > 0){
+											if(collisions[0].distance <= 1.5){
+												console.log('GAME OVER');
+												paused = true;
+											}
+										}
+									}
+								}
+							}
+
+							if(pipeService.pipeGate){
+								checkPipeVisible();
+							  pipeService.pipeGate.translateZ(-0.2);
+							}
+							backgroundTexture.offset.set(backgroundTexture.offset.x -= .0005,0);
+							render();
 						}
-						backgroundTexture.offset.set(backgroundTexture.offset.x -= .0005,0);
-						render();
 					}
 
 					function render() {
