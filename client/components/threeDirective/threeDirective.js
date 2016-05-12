@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('flappyBirdThreeJs')
-	.directive('threeDirective',function ($rootScope, controlsService, pipeService) {
+	.directive('threeDirective',function ($rootScope, controlsService, pipeService, ngAudio) {
 			return {
 				restrict: 'E',
 				link: function (scope, elem) {
@@ -22,6 +22,13 @@ angular.module('flappyBirdThreeJs')
       			new THREE.Vector3(0, 1, 0),
       			new THREE.Vector3(0, -1, 0)
 					];
+
+					scope.backgroundSound = ngAudio.load("assets/audio/HogBitchStomp.mp3");
+					scope.backgroundSound.loop = true;
+					scope.backgroundSound.volume = 0.1;
+					scope.birdFlap = ngAudio.load("assets/audio/birdFlap.mp3");
+					scope.collision = ngAudio.load("assets/audio/collision.mp3");
+					scope.backgroundSound.play();
 					//init the scene
 					init();
 					animate();
@@ -99,6 +106,7 @@ angular.module('flappyBirdThreeJs')
 					}
 
 					function flapBird(){
+						scope.birdFlap.play();
 						bird.setAngularVelocity({x: 0, y: 0, z: 0});
 						var effect = new THREE.Vector3(0,0.1,0);
 						var offset = new THREE.Vector3(0,0,0);
@@ -133,6 +141,7 @@ angular.module('flappyBirdThreeJs')
 										if(collisions.length > 0){
 											if(collisions[0].distance <= 1.5){
 												console.log('GAME OVER');
+												scope.collision.play();
 												paused = true;
 											}
 										}
