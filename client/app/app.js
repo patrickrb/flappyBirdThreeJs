@@ -9,7 +9,8 @@ angular.module('flappyBirdThreeJs', [
   'validation.match',
   'ui.bootstrap',
   'ui.gravatar',
-  'ngMaterial'
+  'ngMaterial',
+  'ngAudio'
 ])
   .config(function($stateProvider, $urlRouterProvider, $locationProvider) {
     $urlRouterProvider
