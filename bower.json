@@ -3,6 +3,7 @@
   "version": "0.0.0",
   "dependencies": {
     "angular": "1.5.0",
+    "angular-audio": "~1.7.2",
     "json3": "~3.3.1",
     "es5-shim": "~4.5.5",
     "angular-resource": "~1.5.0",
@@ -24,8 +25,7 @@
     "angular-gravatar": "~0.4.1",
     "three.js": "threejs#*",
     "animate.css": "~3.5.1",
-    "Physijs": "physijs#*",
-    "angular-audio": "~1.7.2"
+    "Physijs": "physijs#*"
   },
   "devDependencies": {
     "angular-mocks": "~1.5.0"
