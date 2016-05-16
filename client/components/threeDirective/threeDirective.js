@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('flappyBirdThreeJs')
-	.directive('threeDirective',function ($rootScope, controlsService, pipeService, ngAudio, pointsService) {
+	.directive('threeDirective',function ($rootScope, controlsService, pipeService, pointsService, soundService) {
 			return {
 				restrict: 'E',
 				link: function (scope, elem) {
@@ -23,12 +23,7 @@ angular.module('flappyBirdThreeJs')
       			new THREE.Vector3(0, -1, 0)
 					];
 
-					scope.backgroundSound = ngAudio.load("assets/audio/Happy8bit.mp3");
-					scope.backgroundSound.loop = true;
-					scope.backgroundSound.volume = 0.1;
-					scope.birdFlap = ngAudio.load("assets/audio/birdFlap.mp3");
-					scope.collision = ngAudio.load("assets/audio/collision.mp3");
-					scope.backgroundSound.play();
+					soundService.loadSounds();
 					//init the scene
 					init();
 					animate();
@@ -54,13 +49,6 @@ angular.module('flappyBirdThreeJs')
             var directionalLight = new THREE.PointLight( 0xffeedd );
             directionalLight.position.set( -10, 0, 0 );
             scene.add( directionalLight );
-
-
-
-            // var ambientLight = new THREE.AmbientLight( 0xffeedd );
-            // ambientLight.position.set( 0, 1, 1 );
-            // scene.add( ambientLight );
-
 
 						//load bird asset
             loader.load('assets/models/bird.json',function (obj) {
@@ -106,7 +94,7 @@ angular.module('flappyBirdThreeJs')
 					}
 
 					function flapBird(){
-						scope.birdFlap.play();
+						soundService.birdFlap.play();
 						bird.setAngularVelocity({x: 0, y: 0, z: 0});
 						var effect = new THREE.Vector3(0,0.1,0);
 						var offset = new THREE.Vector3(0,0,0);
@@ -140,7 +128,7 @@ angular.module('flappyBirdThreeJs')
 										var collisions = raycaster.intersectObjects(pipeService.pipeGate.children);
 										if(collisions.length > 0){
 											if((collisions[0].distance <= 1.5) && (collisions[0].object.name !== "pointBox")){
-												scope.collision.play();
+												soundService.collision.play();
 												paused = true;
 											}
 
