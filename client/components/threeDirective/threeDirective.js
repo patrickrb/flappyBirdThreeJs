@@ -11,7 +11,7 @@ angular.module('flappyBirdThreeJs')
 					var raycaster;
 					var bird;
 					var backgroundTexture;
-					var paused = false;
+					var paused = true;
 					var loader = new THREE.ObjectLoader();
 					var collisionRays = [
 						new THREE.Vector3(0, 0, 1),
@@ -23,6 +23,10 @@ angular.module('flappyBirdThreeJs')
 					//init the scene
 					init();
 					animate();
+
+					$rootScope.$on('playGame', function(){
+						paused = false;
+					})
 
 					function init() {
 						camera = new THREE.PerspectiveCamera(90, window.innerWidth / window.innerHeight, 1, 999000);
@@ -69,7 +73,7 @@ angular.module('flappyBirdThreeJs')
 
 						// Events
 						window.addEventListener('resize',  onWindowResize, false);
-						window.addEventListener('mousedown', onMouseDown, false);
+						elem[0].addEventListener('mousedown', onMouseDown, false);
 						// window.addEventListener('mousemove', onMouseMove, false);
 
             controlsService.addControls(camera, elem[0].childNodes[0]);
@@ -96,7 +100,6 @@ angular.module('flappyBirdThreeJs')
 
 					function animate(time) {
 						if(!paused){
-							requestAnimationFrame(animate);
 						  controlsService.getControls().update();
 							if(bird){
 								if(bird.hasOwnProperty('geometry')){
@@ -129,12 +132,15 @@ angular.module('flappyBirdThreeJs')
 								}
 							}
 							backgroundTexture.offset.set(backgroundTexture.offset.x -= 0.0005,0);
-							render();
 						}
+						requestAnimationFrame(animate);
+						render();
 					}
 
 					function render() {
-						scene.simulate(); // run physics
+						if(!paused){
+							scene.simulate(); // run physics
+						}
 						// renderer.render(backgroundScene , backgroundCamera )
 						renderer.render(scene, camera);
 					}
