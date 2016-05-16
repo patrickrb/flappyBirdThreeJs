@@ -23,7 +23,7 @@ angular.module('flappyBirdThreeJs')
       			new THREE.Vector3(0, -1, 0)
 					];
 
-					scope.backgroundSound = ngAudio.load("assets/audio/HogBitchStomp.mp3");
+					scope.backgroundSound = ngAudio.load("assets/audio/Happy8bit.mp3");
 					scope.backgroundSound.loop = true;
 					scope.backgroundSound.volume = 0.1;
 					scope.birdFlap = ngAudio.load("assets/audio/birdFlap.mp3");
