@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('flappyBirdThreeJs')
-	.directive('threeDirective',function ($rootScope, controlsService, pipeService, pointsService, soundService) {
+	.directive('threeDirective',function ($rootScope, controlsService, pipeService, pointsService, soundService, utilsService) {
 			return {
 				restrict: 'E',
 				link: function (scope, elem) {
@@ -126,10 +126,10 @@ angular.module('flappyBirdThreeJs')
 							if(pipeService.pipeGate){
 								for (var pipeGateIndex = 0; pipeGateIndex < pipeService.pipeGates.length; pipeGateIndex++){
 							  	pipeService.pipeGates[pipeGateIndex].translateZ(-0.2);
-									if(pipeService.pipeGates[pipeGateIndex].position.z <= -22){
-										pipeService.pipeGates[pipeGateIndex].position.setZ(85);
+									if(pipeService.pipeGates[pipeGateIndex].position.z <= -35){
+										pipeService.pipeGates[pipeGateIndex].position.set(0,utilsService.randNum(-7, 5), 65);
 									}
-								}
+								} 
 							}
 							backgroundTexture.offset.set(backgroundTexture.offset.x -= 0.0005,0);
 						}
