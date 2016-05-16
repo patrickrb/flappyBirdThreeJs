@@ -1,6 +1,16 @@
 $fa-font-path: "../bower_components/font-awesome/fonts";
 @import '../bower_components/font-awesome/scss/font-awesome';
 
+@font-face {
+    font-family: 'pixel_myzregular';
+    src: url('../assets/fonts/PixelMYZ.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+
+}
+
+h1 { font-family: "pixel_myzregular", sans-serif }
+
 /**
  * App-wide Styles
  */
@@ -22,4 +32,5 @@ $fa-font-path: "../bower_components/font-awesome/fonts";
 // Component styles are injected through grunt
 // injector
 @import 'main/main.scss';
+@import '../components/newGameModal/newGameModal.scss';
 // endinjector

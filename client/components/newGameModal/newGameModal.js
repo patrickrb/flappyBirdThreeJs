@@ -1,11 +1,12 @@
 'use strict';
 
 angular.module('flappyBirdThreeJs')
-    .directive('navbar', function() {
+    .directive('newGameModal', function() {
         return {
             restrict: 'E',
-            templateUrl: 'components/navbar/navbar.html',
+            templateUrl: 'components/newGameModal/newGameModal.html',
             link: function($scope) {
+              console.log('new game modal loaded')
             }
         };
     });
