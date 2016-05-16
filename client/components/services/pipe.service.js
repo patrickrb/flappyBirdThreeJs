@@ -34,11 +34,11 @@ angular.module('flappyBirdThreeJs')
                 this.topPipeObject = this.pipeObject.clone();
                 this.gatePointBox = this.pointBox.clone();
     						this.topPipeObject.rotation.z = THREE.Math.degToRad( 180 ); //rotate the plane 90 degrees
-                this.topPipeObject.position.set( 0, 3, 0 );  //move the background texture back off the bird and pipe gates a bit
+                this.topPipeObject.position.set( 0, 0.75, 0 );  //move the background texture back off the bird and pipe gates a bit
                 this.pipeGate.add(this.gatePointBox);
                 this.pipeGate.add(this.bottomPipeObject);
                 this.pipeGate.add(this.topPipeObject);
-                this.pipeGate.position.set(0,utilsService.randNum(-6, 4), i * 20);
+                this.pipeGate.position.set(0,utilsService.randNum(-7, 5), i * 20);
                 this.pipeGates.push(this.pipeGate);
                 scene.add(this.pipeGate);
               }
