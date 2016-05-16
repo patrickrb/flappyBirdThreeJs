@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('flappyBirdThreeJs')
-	.directive('threeDirective',function ($rootScope, controlsService, pipeService, ngAudio) {
+	.directive('threeDirective',function ($rootScope, controlsService, pipeService, ngAudio, pointsService) {
 			return {
 				restrict: 'E',
 				link: function (scope, elem) {
@@ -23,7 +23,7 @@ angular.module('flappyBirdThreeJs')
       			new THREE.Vector3(0, -1, 0)
 					];
 
-					scope.backgroundSound = ngAudio.load("assets/audio/HogBitchStomp.mp3");
+					scope.backgroundSound = ngAudio.load("assets/audio/Happy8bit.mp3");
 					scope.backgroundSound.loop = true;
 					scope.backgroundSound.volume = 0.1;
 					scope.birdFlap = ngAudio.load("assets/audio/birdFlap.mp3");
@@ -139,10 +139,14 @@ angular.module('flappyBirdThreeJs')
 										raycaster.set(bird.position, collisionRays[i]);
 										var collisions = raycaster.intersectObjects(pipeService.pipeGate.children);
 										if(collisions.length > 0){
-											if(collisions[0].distance <= 1.5){
-												console.log('GAME OVER');
+											if((collisions[0].distance <= 1.5) && (collisions[0].object.name !== "pointBox")){
 												scope.collision.play();
 												paused = true;
+											}
+
+											if((collisions[0].distance <= 0.2) && (collisions[0].object.name === "pointBox")){
+												pointsService.setPoints(pointsService.getPoints() + 1);
+												console.log('point: ', pointsService.getPoints());
 											}
 										}
 									}
