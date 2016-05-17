@@ -5,10 +5,13 @@ angular.module('flappyBirdThreeJs')
     class PipeService {
             constructor() {
               this.pipeGate = new THREE.Object3D();
+              this.pipeGates = [];
               this.pipeObject = {};
               this.topPipeObject = {};
               this.pointBox = {};
               this.loader = new THREE.ObjectLoader();
+              this.pointBox = new THREE.Mesh( new THREE.BoxGeometry( 100, 50, 0 ), new THREE.MeshBasicMaterial( {visible: false} ) );
+              this.pointBox.name = 'pointBox';
             }
 
             loadPipe(){
@@ -24,19 +27,27 @@ angular.module('flappyBirdThreeJs')
               });
             }
 
-            buildPipeGate(scene,screenEdge){
-              scene.remove(this.pipeGate);
-              this.pipeGate = new THREE.Object3D();
-              this.topPipeObject = this.pipeObject.clone();
-  						this.topPipeObject.rotation.z = THREE.Math.degToRad( 180 ); //rotate the plane 90 degrees
-              this.topPipeObject.position.set( 0, 3, 0 );  //move the background texture back off the bird and pipe gates a bit
-              this.pointBox = new THREE.Mesh( new THREE.BoxGeometry( 100, 50, 0 ), new THREE.MeshBasicMaterial( {visible: false} ) );
-              this.pointBox.name = "pointBox";
-              this.pipeGate.add(this.pointBox);
-              this.pipeGate.add(this.pipeObject);
-              this.pipeGate.add(this.topPipeObject);
-              this.pipeGate.position.set(0,utilsService.randNum(-6, 4),screenEdge);
-              scene.add(this.pipeGate);
+            buildPipeGate(scene){
+              var distance = 25;
+              this.pipeGates.forEach(function(pipeGate){
+                scene.remove(pipeGate);
+              })
+              this.pipeGates.length = 0;
+              for(var i=0; i < 4; i++){
+                this.pipeGate = new THREE.Object3D();
+                this.bottomPipeObject = this.pipeObject.clone();
+                this.topPipeObject = this.pipeObject.clone();
+                this.gatePointBox = this.pointBox.clone();
+    						this.topPipeObject.rotation.z = THREE.Math.degToRad( 180 ); //rotate the plane 90 degrees
+                this.topPipeObject.position.set( 0, 0.75, 0 );  //move the background texture back off the bird and pipe gates a bit
+                this.pipeGate.add(this.gatePointBox);
+                this.pipeGate.add(this.bottomPipeObject);
+                this.pipeGate.add(this.topPipeObject);
+                this.pipeGate.position.set(0,utilsService.randNum(-7, 5), distance);
+                distance = distance + 25;
+                this.pipeGates.push(this.pipeGate);
+                scene.add(this.pipeGate);
+              }
             }
 
         }

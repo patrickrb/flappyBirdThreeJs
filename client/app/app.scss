@@ -1,6 +1,26 @@
 $fa-font-path: "../bower_components/font-awesome/fonts";
 @import '../bower_components/font-awesome/scss/font-awesome';
 
+@font-face {
+    font-family: 'pixel_myzregular';
+    src: url('../assets/fonts/PixelMYZ.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+
+}
+
+h1 { font-family: "pixel_myzregular", sans-serif }
+
+.noselect {
+  -webkit-touch-callout: none; /* iOS Safari */
+  -webkit-user-select: none;   /* Chrome/Safari/Opera */
+  -khtml-user-select: none;    /* Konqueror */
+  -moz-user-select: none;      /* Firefox */
+  -ms-user-select: none;       /* Internet Explorer/Edge */
+  user-select: none;           /* Non-prefixed version, currently
+                                  not supported by any browser */
+}
+
 /**
  * App-wide Styles
  */
@@ -22,4 +42,7 @@ $fa-font-path: "../bower_components/font-awesome/fonts";
 // Component styles are injected through grunt
 // injector
 @import 'main/main.scss';
+@import '../components/gameOverModal/gameOverModal.scss';
+@import '../components/newGameModal/newGameModal.scss';
+@import '../components/scoreBoard/scoreBoard.scss';
 // endinjector

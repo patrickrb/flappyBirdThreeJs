@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('flappyBirdThreeJs')
-	.directive('threeDirective',function ($rootScope, controlsService, pipeService, ngAudio, pointsService) {
+	.directive('threeDirective',function ($rootScope, controlsService, pipeService, pointsService, soundService, utilsService) {
 			return {
 				restrict: 'E',
 				link: function (scope, elem) {
@@ -11,27 +11,29 @@ angular.module('flappyBirdThreeJs')
 					var raycaster;
 					var bird;
 					var backgroundTexture;
-					var paused = false;
+					var paused = true;
 					var loader = new THREE.ObjectLoader();
-					var frustum = new THREE.Frustum();
-					var cameraViewProjectionMatrix = new THREE.Matrix4();
-					var pipeGateVisible = true;
-					var screenEdge;
 					var collisionRays = [
 						new THREE.Vector3(0, 0, 1),
       			new THREE.Vector3(0, 1, 0),
       			new THREE.Vector3(0, -1, 0)
 					];
 
-					scope.backgroundSound = ngAudio.load("assets/audio/Happy8bit.mp3");
-					scope.backgroundSound.loop = true;
-					scope.backgroundSound.volume = 0.1;
-					scope.birdFlap = ngAudio.load("assets/audio/birdFlap.mp3");
-					scope.collision = ngAudio.load("assets/audio/collision.mp3");
-					scope.backgroundSound.play();
+					soundService.loadSounds();
 					//init the scene
 					init();
 					animate();
+
+					$rootScope.$on('restartGame', function(){
+						pipeService.buildPipeGate(scene);
+						paused = false;
+						pointsService.setPoints(0);
+						addBird();
+					});
+
+					$rootScope.$on('playGame', function(){
+						paused = false;
+					});
 
 					function init() {
 						camera = new THREE.PerspectiveCamera(90, window.innerWidth / window.innerHeight, 1, 999000);
@@ -40,9 +42,6 @@ angular.module('flappyBirdThreeJs')
 						camera.lookAt(0,0, 0);
 
 						scene = new Physijs.Scene();
-
-
-						screenEdge = camera.getFilmWidth() / 2;
 
 						raycaster = new THREE.Raycaster();
 						renderer = new THREE.WebGLRenderer({ antialias: true });
@@ -56,28 +55,11 @@ angular.module('flappyBirdThreeJs')
             scene.add( directionalLight );
 
 
-
-            // var ambientLight = new THREE.AmbientLight( 0xffeedd );
-            // ambientLight.position.set( 0, 1, 1 );
-            // scene.add( ambientLight );
-
-
-						//load bird asset
-            loader.load('assets/models/bird.json',function (obj) {
-								bird = new Physijs.BoxMesh(
-				            new THREE.CubeGeometry( 0.2, 0.2, 0.2 ),
-				            new THREE.MeshBasicMaterial()
-				        );
-								bird.add(obj);
-
-								bird.scale.set(5,5,5);
-				        scene.add( bird );
-            });
-
+						addBird();
 						pipeService.loadPipe();
-						$rootScope.$on('loaded:pipe', (event, data) => {
-							pipeService.buildPipeGate(scene, screenEdge);
-						})
+						$rootScope.$on('loaded:pipe', () => {
+							pipeService.buildPipeGate(scene);
+						});
 
 						backgroundTexture = new THREE.TextureLoader().load( '/assets/textures/background.png' );
 						backgroundTexture.wrapS = THREE.RepeatWrapping; //set background texture to repeat wrapping for animation
@@ -88,10 +70,27 @@ angular.module('flappyBirdThreeJs')
 
 						// Events
 						window.addEventListener('resize',  onWindowResize, false);
-						window.addEventListener('mousedown', onMouseDown, false);
+						elem[0].addEventListener('mousedown', onMouseDown, false);
 						// window.addEventListener('mousemove', onMouseMove, false);
 
             controlsService.addControls(camera, elem[0].childNodes[0]);
+					}
+
+					function addBird(){
+						if(bird){
+							scene.remove(bird);
+						}
+						//load bird asset
+						loader.load('assets/models/bird.json',function (obj) {
+								bird = new Physijs.BoxMesh(
+										new THREE.CubeGeometry( 0.2, 0.2, 0.2 ),
+										new THREE.MeshBasicMaterial()
+								);
+								bird.add(obj);
+
+								bird.scale.set(5,5,5);
+								scene.add( bird );
+						});
 					}
 
 					function onMouseDown(){
@@ -99,54 +98,39 @@ angular.module('flappyBirdThreeJs')
 					}
 
 					function onWindowResize() {
-						screenEdge = camera.getFilmWidth() / 2;
 						renderer.setSize(window.innerWidth, window.innerHeight);
 						camera.aspect = window.innerWidth / window.innerHeight;
 						camera.updateProjectionMatrix();
 					}
 
 					function flapBird(){
-						scope.birdFlap.play();
+						soundService.birdFlap.play();
 						bird.setAngularVelocity({x: 0, y: 0, z: 0});
 						var effect = new THREE.Vector3(0,0.1,0);
 						var offset = new THREE.Vector3(0,0,0);
 						bird.applyImpulse(effect, offset);
 					}
 
-					function checkPipeVisible(){
-						camera.updateMatrixWorld(); // make sure the camera matrix is updated
-						camera.matrixWorldInverse.getInverse( camera.matrixWorld );
-						cameraViewProjectionMatrix.multiplyMatrices( camera.projectionMatrix, camera.matrixWorldInverse );
-						frustum.setFromMatrix( cameraViewProjectionMatrix );
-						if(pipeService.pipeGate.children[0]){
-							pipeGateVisible = frustum.intersectsObject( pipeService.pipeGate.children[0] );
-							if(!pipeGateVisible){
-								pipeService.buildPipeGate(scene, screenEdge);
-								pipeGateVisible = true;
-							}
-						}
-					}
-
 
 					function animate(time) {
 						if(!paused){
-							requestAnimationFrame(animate);
 						  controlsService.getControls().update();
 							if(bird){
 								if(bird.hasOwnProperty('geometry')){
-									bird.setAngularVelocity({x: - bird.getLinearVelocity().y / 5 , y: 0, z:0});
-									for (var i = 0; i < collisionRays.length; i++) {
-										raycaster.set(bird.position, collisionRays[i]);
-										var collisions = raycaster.intersectObjects(pipeService.pipeGate.children);
-										if(collisions.length > 0){
-											if((collisions[0].distance <= 1.5) && (collisions[0].object.name !== "pointBox")){
-												scope.collision.play();
-												paused = true;
-											}
-
-											if((collisions[0].distance <= 0.2) && (collisions[0].object.name === "pointBox")){
-												pointsService.setPoints(pointsService.getPoints() + 1);
-												console.log('point: ', pointsService.getPoints());
+									bird.setAngularVelocity({x: - bird.getLinearVelocity().y / 5 , y: 0, z:0}); //if the bird has been loaded, set its rotation based on its linear velocity for animation
+									for (var pipeMeshIndex = 0; pipeMeshIndex < pipeService.pipeGates.length; pipeMeshIndex++){ //iterate through all the pipe children
+										for (var i = 0; i < collisionRays.length; i++) { //iterate through all potential collisions rays
+											raycaster.set(bird.position, collisionRays[i]); //setup the raycaster inside bird in the direction of the collision ray
+											var collisions = raycaster.intersectObjects(pipeService.pipeGates[pipeMeshIndex].children); //raycast from our bird into the pipe meshes and point boxes
+											if(collisions.length > 0){ //check to see if there are any collisions first
+												if((collisions[0].distance <= 1.5) && (collisions[0].object.name !== 'pointBox')){ //check if the bird ran into a pipe
+													soundService.collision.play();
+													paused = true;
+													$rootScope.$broadcast('gameOver');
+												}
+												if((collisions[0].distance > 0.1) && (collisions[0].distance <= 0.201) && (collisions[0].object.name === 'pointBox')){ //check if bird scored a point
+													pointsService.setPoints(pointsService.getPoints() + 1);
+												}
 											}
 										}
 									}
@@ -154,16 +138,23 @@ angular.module('flappyBirdThreeJs')
 							}
 
 							if(pipeService.pipeGate){
-								checkPipeVisible();
-							  pipeService.pipeGate.translateZ(-0.2);
+								for (var pipeGateIndex = 0; pipeGateIndex < pipeService.pipeGates.length; pipeGateIndex++){
+							  	pipeService.pipeGates[pipeGateIndex].translateZ(-0.2);
+									if(pipeService.pipeGates[pipeGateIndex].position.z <= -35){
+										pipeService.pipeGates[pipeGateIndex].position.set(0,utilsService.randNum(-7, 5), 65);
+									}
+								}
 							}
-							backgroundTexture.offset.set(backgroundTexture.offset.x -= .0005,0);
-							render();
+							backgroundTexture.offset.set(backgroundTexture.offset.x -= 0.0005,0);
 						}
+						requestAnimationFrame(animate);
+						render();
 					}
 
 					function render() {
-						scene.simulate(); // run physics
+						if(!paused){
+							scene.simulate(); // run physics
+						}
 						// renderer.render(backgroundScene , backgroundCamera )
 						renderer.render(scene, camera);
 					}
