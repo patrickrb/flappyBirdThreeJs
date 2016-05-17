@@ -29,6 +29,10 @@ angular.module('flappyBirdThreeJs')
 
             buildPipeGate(scene){
               var distance = 25;
+              this.pipeGates.forEach(function(pipeGate){
+                scene.remove(pipeGate);
+              })
+              this.pipeGates.length = 0;
               for(var i=0; i < 4; i++){
                 this.pipeGate = new THREE.Object3D();
                 this.bottomPipeObject = this.pipeObject.clone();

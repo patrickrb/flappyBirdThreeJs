@@ -24,9 +24,16 @@ angular.module('flappyBirdThreeJs')
 					init();
 					animate();
 
+					$rootScope.$on('restartGame', function(){
+						pipeService.buildPipeGate(scene);
+						paused = false;
+						pointsService.setPoints(0);
+						addBird();
+					});
+
 					$rootScope.$on('playGame', function(){
 						paused = false;
-					})
+					});
 
 					function init() {
 						camera = new THREE.PerspectiveCamera(90, window.innerWidth / window.innerHeight, 1, 999000);
@@ -47,18 +54,8 @@ angular.module('flappyBirdThreeJs')
             directionalLight.position.set( -10, 0, 0 );
             scene.add( directionalLight );
 
-						//load bird asset
-            loader.load('assets/models/bird.json',function (obj) {
-								bird = new Physijs.BoxMesh(
-				            new THREE.CubeGeometry( 0.2, 0.2, 0.2 ),
-				            new THREE.MeshBasicMaterial()
-				        );
-								bird.add(obj);
 
-								bird.scale.set(5,5,5);
-				        scene.add( bird );
-            });
-
+						addBird();
 						pipeService.loadPipe();
 						$rootScope.$on('loaded:pipe', () => {
 							pipeService.buildPipeGate(scene);
@@ -77,6 +74,23 @@ angular.module('flappyBirdThreeJs')
 						// window.addEventListener('mousemove', onMouseMove, false);
 
             controlsService.addControls(camera, elem[0].childNodes[0]);
+					}
+
+					function addBird(){
+						if(bird){
+							scene.remove(bird);
+						}
+						//load bird asset
+						loader.load('assets/models/bird.json',function (obj) {
+								bird = new Physijs.BoxMesh(
+										new THREE.CubeGeometry( 0.2, 0.2, 0.2 ),
+										new THREE.MeshBasicMaterial()
+								);
+								bird.add(obj);
+
+								bird.scale.set(5,5,5);
+								scene.add( bird );
+						});
 					}
 
 					function onMouseDown(){
@@ -112,10 +126,10 @@ angular.module('flappyBirdThreeJs')
 												if((collisions[0].distance <= 1.5) && (collisions[0].object.name !== 'pointBox')){ //check if the bird ran into a pipe
 													soundService.collision.play();
 													paused = true;
+													$rootScope.$broadcast('gameOver');
 												}
 												if((collisions[0].distance > 0.1) && (collisions[0].distance <= 0.201) && (collisions[0].object.name === 'pointBox')){ //check if bird scored a point
 													pointsService.setPoints(pointsService.getPoints() + 1);
-													$rootScope.$broadcast('newpoint');
 												}
 											}
 										}
