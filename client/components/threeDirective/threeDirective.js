@@ -115,7 +115,7 @@ angular.module('flappyBirdThreeJs')
 												}
 												if((collisions[0].distance > 0.1) && (collisions[0].distance <= 0.201) && (collisions[0].object.name === 'pointBox')){ //check if bird scored a point
 													pointsService.setPoints(pointsService.getPoints() + 1);
-													console.log('point: ', pointsService.getPoints());
+													$rootScope.$broadcast('newpoint');
 												}
 											}
 										}
@@ -129,7 +129,7 @@ angular.module('flappyBirdThreeJs')
 									if(pipeService.pipeGates[pipeGateIndex].position.z <= -35){
 										pipeService.pipeGates[pipeGateIndex].position.set(0,utilsService.randNum(-7, 5), 65);
 									}
-								} 
+								}
 							}
 							backgroundTexture.offset.set(backgroundTexture.offset.x -= 0.0005,0);
 						}
