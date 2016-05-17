@@ -28,7 +28,8 @@ angular.module('flappyBirdThreeJs')
             }
 
             buildPipeGate(scene){
-              for(var i=0; i < 5; i++){
+              var distance = 25;
+              for(var i=0; i < 4; i++){
                 this.pipeGate = new THREE.Object3D();
                 this.bottomPipeObject = this.pipeObject.clone();
                 this.topPipeObject = this.pipeObject.clone();
@@ -38,7 +39,8 @@ angular.module('flappyBirdThreeJs')
                 this.pipeGate.add(this.gatePointBox);
                 this.pipeGate.add(this.bottomPipeObject);
                 this.pipeGate.add(this.topPipeObject);
-                this.pipeGate.position.set(0,utilsService.randNum(-7, 5), i * 20);
+                this.pipeGate.position.set(0,utilsService.randNum(-7, 5), distance);
+                distance = distance + 25;
                 this.pipeGates.push(this.pipeGate);
                 scene.add(this.pipeGate);
               }
