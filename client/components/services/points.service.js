@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('flappyBirdThreeJs')
-  .service('pointsService', function () {
+  .service('pointsService', function ($rootScope) {
     class PointsService {
             constructor() {
               this.points = 0;
@@ -13,6 +13,7 @@ angular.module('flappyBirdThreeJs')
 
             setPoints(newPointValue){
               this.points = newPointValue;
+              $rootScope.$broadcast('newpoint');
             }
         }
         return new PointsService();
