@@ -43,6 +43,8 @@ angular.module('flappyBirdThreeJs')
 
 						scene = new Physijs.Scene();
 
+						scene.setGravity(new THREE.Vector3( 0,-100, 0 ));
+
 						raycaster = new THREE.Raycaster();
 						renderer = new THREE.WebGLRenderer({ antialias: true });
 						renderer.setSize(window.innerWidth, window.innerHeight);
@@ -84,7 +86,7 @@ angular.module('flappyBirdThreeJs')
 						loader.load('assets/models/bird.json',function (obj) {
 								bird = new Physijs.BoxMesh(
 										new THREE.CubeGeometry( 0.2, 0.2, 0.2 ),
-										new THREE.MeshBasicMaterial()
+										new THREE.MeshLambertMaterial()
 								);
 								bird.add(obj);
 
@@ -106,9 +108,9 @@ angular.module('flappyBirdThreeJs')
 					function flapBird(){
 						soundService.birdFlap.play();
 						bird.setAngularVelocity({x: 0, y: 0, z: 0});
-						var effect = new THREE.Vector3(0,0.1,0);
+						var effect = new THREE.Vector3(0,40,0);
 						var offset = new THREE.Vector3(0,0,0);
-						bird.applyImpulse(effect, offset);
+						bird.setLinearVelocity(effect);
 					}
 
 
@@ -117,7 +119,16 @@ angular.module('flappyBirdThreeJs')
 						  controlsService.getControls().update();
 							if(bird){
 								if(bird.hasOwnProperty('geometry')){
-									bird.setAngularVelocity({x: - bird.getLinearVelocity().y / 5 , y: 0, z:0}); //if the bird has been loaded, set its rotation based on its linear velocity for animation
+									if(bird.getLinearVelocity().y < 0){
+										if(bird.children[0].children[0].rotation.x <= 1){
+											bird.children[0].children[0].rotation.x += 0.2;
+										}
+									}
+									if(bird.getLinearVelocity().y > 0){
+										if(bird.children[0].children[0].rotation.x >= -0.5){
+											bird.children[0].children[0].rotation.x -= 0.2;
+										}
+									}
 									for (var pipeMeshIndex = 0; pipeMeshIndex < pipeService.pipeGates.length; pipeMeshIndex++){ //iterate through all the pipe children
 										for (var i = 0; i < collisionRays.length; i++) { //iterate through all potential collisions rays
 											raycaster.set(bird.position, collisionRays[i]); //setup the raycaster inside bird in the direction of the collision ray
