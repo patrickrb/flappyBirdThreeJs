@@ -38,12 +38,9 @@
 	"materials": [
 		{
 			"uuid": "CF9FCFE8-7188-493D-9B03-8713AE67D024",
-			"type": "MeshPhongMaterial",
+			"type": "MeshLambertMaterial",
 			"name": "Material.001",
 			"color": 16777215,
-			"emissive": 0,
-			"specular": 1118481,
-			"shininess": 30,
 			"map": "617EC0B5-0CD5-4FFD-9674-99384D48C8CE"
 		}],
 	"textures": [
