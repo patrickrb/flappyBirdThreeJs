@@ -129,10 +129,9 @@ angular.module('flappyBirdThreeJs')
 											bird.children[0].children[0].rotation.x -= 0.2;
 										}
 									}
-									for (var pipeMeshIndex = 0; pipeMeshIndex < pipeService.pipeGates.length; pipeMeshIndex++){ //iterate through all the pipe children
 										for (var i = 0; i < collisionRays.length; i++) { //iterate through all potential collisions rays
 											raycaster.set(bird.position, collisionRays[i]); //setup the raycaster inside bird in the direction of the collision ray
-											var collisions = raycaster.intersectObjects(pipeService.pipeGates[pipeMeshIndex].children); //raycast from our bird into the pipe meshes and point boxes
+											var collisions = raycaster.intersectObjects(pipeService.pipeGateCollisionArray); //raycast from our bird into the pipe meshes and point boxes
 											if(collisions.length > 0){ //check to see if there are any collisions first
 												if((collisions[0].distance <= 1.5) && (collisions[0].object.name !== 'pointBox')){ //check if the bird ran into a pipe
 													soundService.collision.play();
@@ -144,7 +143,6 @@ angular.module('flappyBirdThreeJs')
 												}
 											}
 										}
-									}
 								}
 							}
 
