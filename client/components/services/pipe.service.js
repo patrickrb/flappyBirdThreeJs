@@ -32,7 +32,7 @@ angular.module('flappyBirdThreeJs')
               var distance = 25;
               this.pipeGates.forEach(function(pipeGate){
                 scene.remove(pipeGate);
-              })
+              });
               this.pipeGates.length = 0;
               this.pipeGateCollisionArray.length = 0;
               for(var i=0; i < 4; i++){
