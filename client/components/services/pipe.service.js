@@ -12,6 +12,7 @@ angular.module('flappyBirdThreeJs')
               this.loader = new THREE.ObjectLoader();
               this.pointBox = new THREE.Mesh( new THREE.BoxGeometry( 100, 50, 0 ), new THREE.MeshBasicMaterial( {visible: false} ) );
               this.pointBox.name = 'pointBox';
+              this.pipeGateCollisionArray = [];
             }
 
             loadPipe(){
@@ -33,6 +34,7 @@ angular.module('flappyBirdThreeJs')
                 scene.remove(pipeGate);
               })
               this.pipeGates.length = 0;
+              this.pipeGateCollisionArray.length = 0;
               for(var i=0; i < 4; i++){
                 this.pipeGate = new THREE.Object3D();
                 this.bottomPipeObject = this.pipeObject.clone();
@@ -46,6 +48,9 @@ angular.module('flappyBirdThreeJs')
                 this.pipeGate.position.set(0,utilsService.randNum(-7, 5), distance);
                 distance = distance + 25;
                 this.pipeGates.push(this.pipeGate);
+                this.pipeGateCollisionArray.push(this.gatePointBox);
+                this.pipeGateCollisionArray.push(this.bottomPipeObject);
+                this.pipeGateCollisionArray.push(this.topPipeObject);
                 scene.add(this.pipeGate);
               }
             }
