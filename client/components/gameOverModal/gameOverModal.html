@@ -1,2 +1,17 @@
-<h1>Game Over!</h1>
-<button type="button" class="btn btn-sunny text-uppercase btn-lg" ng-click="restartGame()"><a href=""><i class="fa fa-refresh"></i>Restart</a></button>
+<div class="container">
+   <div class="row">
+       <div class="col-xs-12">
+         <h1>Game Over!</h1>
+     </div>
+   </div>
+   <div class="row">
+     <div class="col-xs-4 col-xs-offset-4">
+       <h2>Your Score: {{points}}</h2>
+     </div>
+   </div>
+   <div class="row">
+     <div class="col-xs-12">
+       <div class="playButton center-block" ng-click="restartGame()"></div>
+     </div>
+   </div>
+ </div>

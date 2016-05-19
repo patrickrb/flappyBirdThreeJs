@@ -10,6 +10,7 @@ $fa-font-path: "../bower_components/font-awesome/fonts";
 }
 
 h1 { font-family: "pixel_myzregular", sans-serif }
+h2 { font-family: "pixel_myzregular", sans-serif }
 
 .noselect {
   -webkit-touch-callout: none; /* iOS Safari */
@@ -19,6 +20,16 @@ h1 { font-family: "pixel_myzregular", sans-serif }
   -ms-user-select: none;       /* Internet Explorer/Edge */
   user-select: none;           /* Non-prefixed version, currently
                                   not supported by any browser */
+}
+
+.playButton {
+  width:220px;
+  height:120px;
+ background:transparent url('../assets/textures/button.png') center top no-repeat;
+}
+
+.playButton:hover {
+ background:transparent url('../assets/textures/button_pressed.png') center top no-repeat;
 }
 
 /**
