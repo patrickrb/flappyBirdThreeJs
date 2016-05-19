@@ -1,8 +1,13 @@
 game-over-modal{
   position: absolute;
-  top: 45%;
-  left: 45%;
+  top: 30%;
+  width: 100%;
+  text-align: center;
   h1{
     font-size: 100px;
+    text-shadow: 4px 4px #000000;
+  }
+  h2{
+    text-shadow: 2px 2px #000000;
   }
 }
