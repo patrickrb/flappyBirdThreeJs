@@ -9,13 +9,13 @@ angular.module('flappyBirdThreeJs')
               elem.hide();
               $rootScope.$on('gameOver', function(){
                 $scope.points = pointsService.getPoints();
-                elem.fadeIn();
+                elem.show();
               });
 
               $scope.restartGame = function(){
                 console.log('sending restart broadcast');
                 $rootScope.$broadcast('restartGame');
-                elem.fadeOut();
+                elem.hide();
               };
             }
         };

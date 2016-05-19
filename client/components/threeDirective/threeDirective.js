@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('flappyBirdThreeJs')
-	.directive('threeDirective',function ($rootScope, controlsService, pipeService, pointsService, soundService, utilsService) {
+	.directive('threeDirective',function ($rootScope, $timeout, controlsService, pipeService, pointsService, soundService, utilsService) {
 			return {
 				restrict: 'E',
 				link: function (scope, elem) {
@@ -10,13 +10,14 @@ angular.module('flappyBirdThreeJs')
 					var renderer;
 					var raycaster;
 					var bird;
+					var birdClone;
 					var backgroundTexture;
 					var paused = true;
 					var loader = new THREE.ObjectLoader();
 					var collisionRays = [
-						new THREE.Vector3(0, 0, 1),
-      			new THREE.Vector3(0, 1, 0),
-      			new THREE.Vector3(0, -1, 0)
+						new THREE.Vector3(0, 0, 1),  //forward collisions vector
+      			new THREE.Vector3(0, 1, 0),  //top collisions vector
+      			new THREE.Vector3(0, -1, 0)  //bottom collisions vector
 					];
 
 					soundService.loadSounds();
@@ -26,9 +27,9 @@ angular.module('flappyBirdThreeJs')
 
 					$rootScope.$on('restartGame', function(){
 						pipeService.buildPipeGate(scene);
-						paused = false;
 						pointsService.setPoints(0);
-						addBird();
+						loadBird();
+						paused = false;
 					});
 
 					$rootScope.$on('playGame', function(){
@@ -57,7 +58,7 @@ angular.module('flappyBirdThreeJs')
             scene.add( directionalLight );
 
 
-						addBird();
+						loadBird();
 						pipeService.loadPipe();
 						$rootScope.$on('loaded:pipe', () => {
 							pipeService.buildPipeGate(scene);
@@ -78,21 +79,26 @@ angular.module('flappyBirdThreeJs')
             controlsService.addControls(camera, elem[0].childNodes[0]);
 					}
 
-					function addBird(){
-						if(bird){
+					function loadBird(){
+						if(birdClone){
 							scene.remove(bird);
 						}
-						//load bird asset
-						loader.load('assets/models/bird.json',function (obj) {
-								bird = new Physijs.BoxMesh(
-										new THREE.CubeGeometry( 0.2, 0.2, 0.2 ),
-										new THREE.MeshLambertMaterial()
-								);
-								bird.add(obj);
-
-								bird.scale.set(5,5,5);
-								scene.add( bird );
-						});
+							//load bird asset
+							loader.load('assets/models/bird.json',function (obj) {
+								obj.traverse( (child) => {
+                    if ( child instanceof THREE.Mesh ) {
+											var birdGeom = child;
+											bird = new Physijs.BoxMesh(
+													new THREE.CubeGeometry( 0.2, 0.2, 0.2 ),
+													new THREE.MeshLambertMaterial()
+											);
+											bird.add(birdGeom);
+											bird.scale.set(5,5,5);
+											birdClone = bird.clone();
+											scene.add( bird );
+										}
+									});
+								});
 					}
 
 					function onMouseDown(){
@@ -109,7 +115,6 @@ angular.module('flappyBirdThreeJs')
 						soundService.birdFlap.play();
 						bird.setAngularVelocity({x: 0, y: 0, z: 0});
 						var effect = new THREE.Vector3(0,40,0);
-						var offset = new THREE.Vector3(0,0,0);
 						bird.setLinearVelocity(effect);
 					}
 
@@ -120,13 +125,13 @@ angular.module('flappyBirdThreeJs')
 							if(bird){
 								if(bird.hasOwnProperty('geometry')){
 									if(bird.getLinearVelocity().y < 0){
-										if(bird.children[0].children[0].rotation.x <= 1){
-											bird.children[0].children[0].rotation.x += 0.2;
+										if(bird.children[0].rotation.x <= 1){
+											bird.children[0].rotation.x += 0.2;
 										}
 									}
 									if(bird.getLinearVelocity().y > 0){
-										if(bird.children[0].children[0].rotation.x >= -0.5){
-											bird.children[0].children[0].rotation.x -= 0.2;
+										if(bird.children[0].rotation.x >= -0.5){
+											bird.children[0].rotation.x -= 0.2;
 										}
 									}
 										for (var i = 0; i < collisionRays.length; i++) { //iterate through all potential collisions rays
