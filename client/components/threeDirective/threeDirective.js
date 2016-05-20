@@ -129,25 +129,34 @@ angular.module('flappyBirdThreeJs')
 											bird.children[0].rotation.x += 0.2;
 										}
 									}
-									if(bird.getLinearVelocity().y > 0){
+									else {
 										if(bird.children[0].rotation.x >= -0.5){
 											bird.children[0].rotation.x -= 0.2;
 										}
 									}
-										for (var i = 0; i < collisionRays.length; i++) { //iterate through all potential collisions rays
-											raycaster.set(bird.position, collisionRays[i]); //setup the raycaster inside bird in the direction of the collision ray
-											var collisions = raycaster.intersectObjects(pipeService.pipeGateCollisionArray); //raycast from our bird into the pipe meshes and point boxes
-											if(collisions.length > 0){ //check to see if there are any collisions first
-												if((collisions[0].distance <= 1.5) && (collisions[0].object.name !== 'pointBox')){ //check if the bird ran into a pipe
-													soundService.collision.play();
-													paused = true;
-													$rootScope.$broadcast('gameOver');
-												}
-												if((collisions[0].distance > 0.1) && (collisions[0].distance <= 0.201) && (collisions[0].object.name === 'pointBox')){ //check if bird scored a point
-													pointsService.setPoints(pointsService.getPoints() + 1);
-												}
+
+									if(bird.position.y < -30){
+										paused = true;
+										$rootScope.$broadcast('gameOver');
+									}else if(bird.position.y > 30){
+										paused = true;
+										$rootScope.$broadcast('gameOver');
+									}
+
+									for (var i = 0; i < collisionRays.length; i++) { //iterate through all potential collisions rays
+										raycaster.set(bird.position, collisionRays[i]); //setup the raycaster inside bird in the direction of the collision ray
+										var collisions = raycaster.intersectObjects(pipeService.pipeGateCollisionArray); //raycast from our bird into the pipe meshes and point boxes
+										if(collisions.length > 0){ //check to see if there are any collisions first
+											if((collisions[0].distance <= 1.5) && (collisions[0].object.name !== 'pointBox')){ //check if the bird ran into a pipe
+												soundService.collision.play();
+												paused = true;
+												$rootScope.$broadcast('gameOver');
+											}
+											if((collisions[0].distance > 0.1) && (collisions[0].distance <= 0.201) && (collisions[0].object.name === 'pointBox')){ //check if bird scored a point
+												pointsService.setPoints(pointsService.getPoints() + 1);
 											}
 										}
+									}
 								}
 							}
 
