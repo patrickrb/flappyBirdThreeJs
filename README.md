@@ -1,5 +1,7 @@
 Built with [Angular][1] and [Three.js][2]
 
+
+![alt tag](http://flappy.burnsforce.com/assets/images/flappy_three_thumb.png)
 ## Getting Started
 
 ### Prerequisites
