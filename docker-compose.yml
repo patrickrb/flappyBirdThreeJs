@@ -2,6 +2,6 @@ version: '3'
 services:
   flappy:
     build: .
-    image: registry.gitlab.com/patrickrb/threejstornado
+    image: registry.gitlab.com/patrickrb/flappybirdthreejs
     ports:
       - "9000:9000"
