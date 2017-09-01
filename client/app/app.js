@@ -1,15 +1,9 @@
 'use strict';
 
 angular.module('flappyBirdThreeJs', [
-  'ngCookies',
-  'ngResource',
-  'ngSanitize',
-  'btford.socket-io',
   'ui.router',
   'validation.match',
   'ui.bootstrap',
-  'ui.gravatar',
-  'ngMaterial',
   'ngAudio'
 ])
   .config(function($stateProvider, $urlRouterProvider, $locationProvider) {

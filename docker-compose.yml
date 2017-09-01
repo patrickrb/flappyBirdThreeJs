@@ -1,0 +1,6 @@
+version: '2'
+services:
+  flappy:
+    build: .
+    ports:
+      - "9000:9000"
